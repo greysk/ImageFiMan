@@ -13,7 +13,7 @@ namespace ImageFiMan.Data
     {
         public static void Seed(this ModelBuilder modelBuilder)
         {
-            const string inFile = @"C:\Users\Graes\source\repos\ImageFiMan\ImageFiMan\Data\duplicate_file20240524.csv";
+            const string inFile = @"P:\source\greysk\ImageFiMan\ImageFiMan\Data\duplicate_file20240524.csv";
             string[] lines = File.ReadAllLines(Path.ChangeExtension(inFile, ".csv"));
             int fileNum = 0;
 

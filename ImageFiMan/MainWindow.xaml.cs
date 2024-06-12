@@ -30,7 +30,7 @@ namespace ImageFiMan
 
             using (var context = new DuplicateFileGroupContext())
             {
-                // context.Database.Migrate();
+                context.Database.EnsureCreated();
                 var groups = context.DuplicateGroups.Include(a => a.DuplicateFiles).ToList();
 
                 trvFileGroups.ItemsSource = groups;
@@ -54,6 +54,12 @@ namespace ImageFiMan
             {
                 Photos.DuplicateFiles = new List<DuplicateFile>() { ((DuplicateFile)e.NewValue) };
             }
+        }
+
+        private void OnPhotoClick(object sender, RoutedEventArgs e)
+        {
+            var pvWindow = new PhotoViewer { SelectedPhoto = (Photo)PhotosListBox.SelectedItem };
+            pvWindow.Show();
         }
     }
 }

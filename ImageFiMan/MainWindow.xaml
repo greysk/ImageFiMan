@@ -24,7 +24,7 @@
                 <!-- Image Template -->
                 <Border Padding="4" Background="White" BorderBrush="#22000000" BorderThickness="1">
                     <StackPanel Orientation="Vertical">
-                        <Image Source="{Binding Image.Thumbnail}" />
+                        <Image Source="{Binding Image}"/>
                         <Label Content="{Binding Metadata.DateImageTaken}">
                             <Label.ToolTip>
                                 Only JPeg images with a stored thumbnail will display a thumbnail during preview.
@@ -51,32 +51,180 @@
                 </DataTemplate>
             </HierarchicalDataTemplate.ItemTemplate>
         </HierarchicalDataTemplate>
+
+        <!-- Main photo catalog view -->
+        <Style TargetType="{x:Type ListBox}" x:Key="PhotoListBoxStyle">
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ListBox}">
+                        <WrapPanel Margin="5" IsItemsHost="True" Orientation="Horizontal"
+                                   ItemHeight="{Binding ElementName=ZoomSlider, Path='Value'}"
+                                   ItemWidth="{Binding ElementName=ZoomSlider, Path='Value'}"
+                                   VerticalAlignment="Top" HorizontalAlignment="Stretch" />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
+        
+        <!-- Style for an individual generic item -->
+        <Style TargetType="{x:Type ListBoxItem}">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                        <Border SnapsToDevicePixels="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                Background="{TemplateBinding Background}">
+                            <ContentPresenter />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background" Value="#445B6249" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Removes dotted rectangle focus -->
+        <Style TargetType="{x:Type ItemsControl}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ItemsControl}">
+                        <WrapPanel IsItemsHost="True" />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- For metadata properties pane -->
+        <Style TargetType="{x:Type GroupBox}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type GroupBox}">
+                        <Grid>
+                            <Border Background="#AAFFFFFF" CornerRadius="4" BorderBrush="#66000000" BorderThickness="1">
+                                <Border CornerRadius="4" BorderBrush="#88FFFFFF" BorderThickness="1"
+                                        ClipToBounds="true">
+                                    <Border CornerRadius="6" BorderThickness="2" BorderBrush="#ABB497">
+                                        <Border.BitmapEffect>
+                                            <BlurBitmapEffect Radius="6" />
+                                        </Border.BitmapEffect>
+                                        <Border CornerRadius="6" BorderThickness="2" BorderBrush="#DEF2AD">
+                                            <Border.BitmapEffect>
+                                                <BlurBitmapEffect Radius="6" />
+                                            </Border.BitmapEffect>
+                                        </Border>
+                                    </Border>
+                                </Border>
+                            </Border>
+                            <ContentPresenter Margin="6" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Default label style -->
+        <Style TargetType="{x:Type Label}">
+            <Setter Property="FontFamily" Value="Segoe UI" />
+            <Setter Property="FontSize" Value="11" />
+        </Style>
+
+        <!-- Headers for metadata properties -->
+        <Style x:Key="MetadataHeader" TargetType="{x:Type Label}">
+            <Setter Property="Background">
+                <Setter.Value>
+                    <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
+                        <LinearGradientBrush.GradientStops>
+                            <GradientStop Offset="0.5" Color="{x:Static SystemColors.AppWorkspaceColor}" />
+                            <GradientStop Offset="2" Color="Transparent" />
+                        </LinearGradientBrush.GradientStops>
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="FontWeight" Value="Bold" />
+        </Style>
     </Window.Resources>
-    <DockPanel>
-        <Border Background="Aqua" DockPanel.Dock="Top" Padding="5" Margin="5">
-            <Label>Dock Top</Label>
-        </Border>
-        <Border Background="Aqua" DockPanel.Dock="Bottom" Padding="5" Margin="5">
-            <Label>Dock Bottom</Label>
-        </Border>
-        <Border Background="AliceBlue" DockPanel.Dock="Left" Padding="10" Margin="5">
-            <ScrollViewer>
-                <TreeView Name="trvFileGroups" SelectedItemChanged="OnTrvSelected">
-                </TreeView>
+    
+    <Grid DataContext="{Binding Source={StaticResource Photos}}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="150"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="150"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <!-- Group TreeView -->
+        <GroupBox Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" Margin="0,0,10,0">
+            <ScrollViewer DockPanel.Dock="Left" 
+                          VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <TreeView Name="trvFileGroups" SelectedItemChanged="OnTrvSelected"/>
             </ScrollViewer>
-        </Border>
-        <Border DockPanel.Dock="Right" Background="Beige" Padding="10" Margin="5">
-            <Label>Right</Label>
-        </Border>
-        <Border Background="BlanchedAlmond" Padding="10" Margin="5" DataContext="{Binding Source={StaticResource Photos}}">
-            <ScrollViewer>
+        </GroupBox>
+        
+        <!-- Currently selected image path -->
+        <GroupBox Grid.Column="1" Grid.Row="0" Margin="0,5,0,5">
+            <DockPanel>
+                <Label DockPanel.Dock="Left" Margin="0,0,10,0">Source:</Label>
+                <Label Content="{Binding Path=Source}" Margin="10,0" />
+            </DockPanel>
+        </GroupBox>
+        <!-- Photo Canvas -->
+        <GroupBox Grid.Column="1" Grid.Row="1">
+            <ScrollViewer 
+                VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                 <ListBox Name="PhotosListBox" Margin="5" SelectionMode="Extended" 
-                         ItemsSource="{Binding}"
-                         SelectedIndex="0">
-            
+                             ItemsSource="{Binding}"
+                             IsSynchronizedWithCurrentItem="True"
+                             Style="{StaticResource PhotoListBoxStyle}"
+                             SelectedIndex="0"
+                             MouseDoubleClick="OnPhotoClick">
                 </ListBox>
             </ScrollViewer>
-            
-        </Border>
-    </DockPanel>
+        </GroupBox>
+        <!-- Splitter -->
+        <GridSplitter Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="15"
+                      Background="Transparent" ShowsPreview="True" />
+
+        <!-- Right Hand Panel -->
+        <DockPanel Grid.Column="2" Grid.Row="0" Grid.RowSpan="2" Margin="10,0,0,0">
+            <!-- Zoom Control -->
+            <DockPanel DockPanel.Dock="Bottom" Margin="5">
+                <Label DockPanel.Dock="Left">Zoom:</Label>
+                <Slider Name="ZoomSlider"
+                        Margin="10,0,0,0"
+                        Orientation="Horizontal"
+                        Minimum="100"
+                        Maximum="1800"
+                        Value="200"
+                        TickFrequency="80"
+                        TickPlacement="BottomRight"
+                        SmallChange="5"
+                        LargeChange="20" />
+            </DockPanel>
+            <!-- Metadata Panel -->
+            <GroupBox>
+                <ScrollViewer 
+                    VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel>
+                        <Label Style="{StaticResource MetadataHeader}">Date Image Taken:</Label>
+                        <Label Content="{Binding Path=Image.DateImageTaken}" />
+                        <Label Style="{StaticResource MetadataHeader}">Width:</Label>
+                        <Label Content="{Binding Path=Image.Width}"/>
+                        <Label Style="{StaticResource MetadataHeader}">Height:</Label>
+                        <Label Content="{Binding Path=Image.Height}"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </GroupBox>
+        </DockPanel>
+
+
+    </Grid>
 </Window>
