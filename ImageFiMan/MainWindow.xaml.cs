@@ -52,7 +52,7 @@ namespace ImageFiMan
             }
             else if (e.NewValue is DuplicateFile)
             {
-                Photos.DuplicateFiles = new List<DuplicateFile>() { ((DuplicateFile)e.NewValue) };
+                Photos.DuplicateFiles = [((DuplicateFile)e.NewValue)];
             }
         }
 

@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.ObjectModel;
+using System.Data;
+using System.Diagnostics;
 using System.Windows.Media.Imaging;
 using MetadataExtractor;
 using MetadataExtractor.Formats.Exif;
@@ -7,47 +10,60 @@ namespace ImageFiMan.ViewModels
 {
     public class ExifMetadata
     {
-        private readonly IEnumerable<Directory> _metadataDirectories;
+        private ICollection<Directory> _metadataDirectories = [];
+        public ExifMetadata(string name, ICollection<Directory> metadataDirectories)
+        {
+            Name = name;
+            _metadataDirectories = metadataDirectories;
+        }
+        public ExifMetadata(string name, List<Metatag> tags)
+        {
+            Name = name;
+            Tags = tags;
 
-        public ExifMetadata(string imagePath)
-        {
-            _metadataDirectories = ImageMetadataReader.ReadMetadata(imagePath);
         }
-        public uint? Width
-        {
-            get
-            {
-                var subIfDirectory = _metadataDirectories.OfType<ExifSubIfdDirectory>().FirstOrDefault();
-                var value = subIfDirectory?.GetDescription(ExifDirectoryBase.TagExifImageWidth);
-                if (value == null)
-                    return null;
-                return Convert.ToUInt32(value);
-            }
-        }
+        public string Name { get; set; }
+        public ICollection<Metatag> Tags { get; set; } = [];
 
-        public uint? Height
-        {
-            get
-            {
-                var subIfDirectory = _metadataDirectories.OfType<ExifSubIfdDirectory>().FirstOrDefault();
-                var value = subIfDirectory?.GetDescription(ExifDirectoryBase.TagExifImageHeight);
-                if (value == null)
-                    return null;
-                return Convert.ToUInt32(value);
-            }
-        }
+        //public IEnumerable<Directory> GetAllMetaData() {
+        //    return _metadataDirectories;
+        //}
 
-        public DateTime? DateImageTaken
-        {
-            get
-            {
-                var subIfDirectory = _metadataDirectories.OfType<ExifSubIfdDirectory>().FirstOrDefault();
-                var value = subIfDirectory?.GetDescription(ExifDirectoryBase.TagDateTime);
-                if (value == null)
-                    return null;
-                return Convert.ToDateTime(value);
-            }
-        }
+        //public uint? Width
+        //{
+        //    get
+        //    {
+        //        var subIfDirectory = _metadataDirectories.OfType<ExifSubIfdDirectory>().FirstOrDefault();
+        //        var value = subIfDirectory?.GetDescription(ExifDirectoryBase.TagExifImageWidth);
+        //        if (value == null)
+        //            return null;
+        //        return Convert.ToUInt32(value);
+        //    }
+        //}
+
+        //public uint? Height
+        //{
+        //    get
+        //    {
+        //        var subIfDirectory = _metadataDirectories.OfType<ExifSubIfdDirectory>().FirstOrDefault();
+        //        var value = subIfDirectory?.GetDescription(ExifDirectoryBase.TagExifImageHeight);
+        //        if (value == null)
+        //            return null;
+        //        return Convert.ToUInt32(value);
+        //    }
+        //}
+
+        //public DateTime? DateImageTaken
+        //{
+        //    get
+        //    {
+        //        var subIfDirectory = _metadataDirectories.OfType<ExifSubIfdDirectory>().FirstOrDefault();
+        //        var value = subIfDirectory?.GetDescription(ExifDirectoryBase.TagDateTime);
+        //        if (value == null)
+        //            return null;
+        //        return Convert.ToDateTime(value);
+        //    }
+        //}
 
         private decimal ParseUnsignedRational(ulong exifValue) => (exifValue & 0xFFFFFFFFL) / (decimal)((exifValue & 0xFFFFFFFF00000000L) >> 32);
 

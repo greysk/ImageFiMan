@@ -17,7 +17,7 @@ namespace ImageFiMan.Data
             string[] lines = File.ReadAllLines(Path.ChangeExtension(inFile, ".csv"));
             int fileNum = 0;
 
-            DuplicateReport newReport = new DuplicateReport { DuplicateReportId = -1, DateGenerated = DuplicateReport.GetFileDate(inFile) };
+            DuplicateReport newReport = new DuplicateReport { DuplicateReportId = 2, DateGenerated = DuplicateReport.GetFileDate(inFile) };
             DuplicateGroup lastAddedGroup = new DuplicateGroup { GroupNo = 0 };
 
             //Add report.
@@ -41,7 +41,7 @@ namespace ImageFiMan.Data
                 if (lastAddedGroup == null || lastAddedGroup.GroupNo != groupNo)
                 {
                     //Add new group.
-                    lastAddedGroup = new DuplicateGroup { DuplicateGroupId = groupNo * -1, GroupNo = groupNo, DuplicateReportId = newReport.DuplicateReportId};
+                    lastAddedGroup = new DuplicateGroup { DuplicateGroupId = groupNo, GroupNo = groupNo, DuplicateReportId = newReport.DuplicateReportId};
                     modelBuilder.Entity<DuplicateGroup>().HasData(lastAddedGroup);
                 }
 
@@ -50,7 +50,7 @@ namespace ImageFiMan.Data
                 modelBuilder.Entity<DuplicateFile>().HasData(
                     new DuplicateFile
                     {
-                        DuplicateFileId = fileNum * -1,
+                        DuplicateFileId = fileNum,
                         DuplicateGroupId = lastAddedGroup.DuplicateGroupId,
                         SharedFolderPath = sharedFolder,
                         Filepath = filePath,

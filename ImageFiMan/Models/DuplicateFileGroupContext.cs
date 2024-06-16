@@ -15,11 +15,12 @@ namespace ImageFiMan.Models
 
         public DuplicateFileGroupContext()
         {
-            string DbDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                               "ImageManFi");
-            Directory.CreateDirectory(DbDir);
-            DbPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                               "ImageManFi", "DuplicateFile.db");            
+            string DbDir = Path.Join(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "ImageManFi");
+            if (!Path.Exists(DbDir))
+                Directory.CreateDirectory(DbDir);
+            DbPath = Path.Join(DbDir, "DuplicateFile.db");            
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
