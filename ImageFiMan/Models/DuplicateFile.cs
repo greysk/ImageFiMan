@@ -1,12 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace ImageFiMan.Models
 {
@@ -38,8 +33,10 @@ namespace ImageFiMan.Models
             } 
         }
         public string Name { get; set; }
+        public bool IsDeleted { get; set; } = false;
         public DateTime? ModifiedTime { get; set; }
         public Int32? ByteSize { get; set; }
+        public bool? IsMarkedForDeletion { get; set; }
 
         public int DuplicateGroupId { get; set; }
         public virtual DuplicateGroup DuplicateGroup {
@@ -56,9 +53,14 @@ namespace ImageFiMan.Models
         public static string ConvertFilePath(string filePath, string startReplace, string replaceWith)
         {
             int postition = filePath.IndexOf(startReplace);
-            StringBuilder strPathBuilder = new StringBuilder(replaceWith);
-            strPathBuilder.Append(filePath.Substring(postition + startReplace.Length).Trim());
-            string newpath = strPathBuilder.ToString();
+            string newpath = filePath;
+            if (postition >= 1)
+            {
+                StringBuilder strPathBuilder = new StringBuilder(replaceWith);
+                strPathBuilder.Append(filePath.Substring(postition + startReplace.Length).Trim());
+                newpath = strPathBuilder.ToString();
+            }
+
             return Path.GetFullPath(newpath);
         }
     }

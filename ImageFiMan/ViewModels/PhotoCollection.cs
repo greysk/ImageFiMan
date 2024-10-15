@@ -1,15 +1,8 @@
-﻿using ImageFiMan.Models;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
-namespace ImageFiMan.ViewModels
+namespace ImageFiMan.Models
 {
     public class PhotoCollection : ObservableCollection<Photo>
     {
@@ -22,6 +15,7 @@ namespace ImageFiMan.ViewModels
             _duplicateFiles = duplicateFiles;
             Update();
         }
+
         public PhotoCollection(List<DuplicateGroup> duplicateGroups)
         {
             _duplicateFiles = new List<DuplicateFile>();

@@ -4,7 +4,7 @@
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using ImageFiMan.ViewModels;
+using ImageFiMan.Models;
 
 namespace ImageFiMan
 {
@@ -13,6 +13,8 @@ namespace ImageFiMan
     /// </summary>
     public partial class PhotoViewer : Window
     {
+        private BitmapFrame _orgImage;
+        private bool _isBlackAndWhite = false;
         public PhotoViewer()
         {
             InitializeComponent();
@@ -22,8 +24,10 @@ namespace ImageFiMan
 
         private void WindowLoaded(object sender, RoutedEventArgs e)
         {
+            _orgImage = SelectedPhoto.Image;
             ViewedPhoto.Source = SelectedPhoto.Image;
             ViewedCaption.Content = SelectedPhoto.Source;
+            ViewedMetatags.ItemsSource = SelectedPhoto.MetaTags;
         }
 
         private void Rotate(object sender, RoutedEventArgs e)
@@ -38,10 +42,18 @@ namespace ImageFiMan
 
         private void BlackAndWhite(object sender, RoutedEventArgs e)
         {
-            BitmapSource img = SelectedPhoto.Image;
-            SelectedPhoto.Image =
-                BitmapFrame.Create(new FormatConvertedBitmap(img, PixelFormats.Gray8, BitmapPalettes.Gray256, 1.0));
-
+            if (!_isBlackAndWhite)
+            {
+                BitmapSource img = SelectedPhoto.Image;
+                SelectedPhoto.Image =
+                    BitmapFrame.Create(new FormatConvertedBitmap(img, PixelFormats.Gray8, BitmapPalettes.Gray256, 1.0));
+                _isBlackAndWhite = true;
+            }
+            else
+            {
+                SelectedPhoto.Image = _orgImage;
+                _isBlackAndWhite = false;
+            }
             ViewedPhoto.Source = SelectedPhoto.Image;
         }
     }

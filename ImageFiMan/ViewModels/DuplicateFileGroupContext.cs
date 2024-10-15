@@ -3,8 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.IO;
 using ImageFiMan.Data;
+using ImageFiMan.Models;
 
-namespace ImageFiMan.Models
+namespace ImageFiMan.ViewModels
 {
     internal class DuplicateFileGroupContext : DbContext
     {
@@ -20,12 +21,13 @@ namespace ImageFiMan.Models
                 "ImageManFi");
             if (!Path.Exists(DbDir))
                 Directory.CreateDirectory(DbDir);
-            DbPath = Path.Join(DbDir, "DuplicateFile.db");            
+            DbPath = Path.Join(DbDir, "DuplicateFile.db");
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlite($"Data Source={DbPath}");
+            optionsBuilder.UseLazyLoadingProxies();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -33,7 +35,7 @@ namespace ImageFiMan.Models
             DuplicateGroup.ApplyConfiguration(modelBuilder);
             DuplicateFile.ApplyConfiguration(modelBuilder);
 
-            DuplModelExtensionBuilder.Seed(modelBuilder);
+            modelBuilder.Seed();
 
             base.OnModelCreating(modelBuilder);
         }

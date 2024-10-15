@@ -1,10 +1,5 @@
 ﻿using ImageFiMan.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 
 namespace ImageFiMan.Data
@@ -13,11 +8,11 @@ namespace ImageFiMan.Data
     {
         public static void Seed(this ModelBuilder modelBuilder)
         {
-            const string inFile = @"P:\source\greysk\ImageFiMan\ImageFiMan\Data\duplicate_file20240524.csv";
+            string inFile = Path.Join(AppDomain.CurrentDomain.BaseDirectory, "Data", "duplicate_file20240524.csv");
             string[] lines = File.ReadAllLines(Path.ChangeExtension(inFile, ".csv"));
             int fileNum = 0;
 
-            DuplicateReport newReport = new DuplicateReport { DuplicateReportId = 2, DateGenerated = DuplicateReport.GetFileDate(inFile) };
+            DuplicateReport newReport = new DuplicateReport { DuplicateReportId = 1, DateGenerated = DuplicateReport.GetFileDate(inFile) };
             DuplicateGroup lastAddedGroup = new DuplicateGroup { GroupNo = 0 };
 
             //Add report.

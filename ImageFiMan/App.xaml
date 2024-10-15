@@ -2,9 +2,9 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:ImageFiMan"
-             xmlns:vsrc="clr-namespace:ImageFiMan.ViewModels"
+             xmlns:src="clr-namespace:ImageFiMan.Models"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-        <ObjectDataProvider x:Key="Photos" ObjectType="{x:Type vsrc:PhotoCollection}"/>
+        <ObjectDataProvider x:Key="Photos" ObjectType="{x:Type src:PhotoCollection}"/>
     </Application.Resources>
 </Application>

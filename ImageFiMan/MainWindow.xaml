@@ -5,12 +5,38 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ImageFiMan"
         xmlns:src="clr-namespace:ImageFiMan.Models"
-        xmlns:vsrc="clr-namespace:ImageFiMan.ViewModels"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Main Window | ImageFiMan" Height="480" Width="960">
     <Window.Resources >
+        <!-- Photo Template -->
+        <DataTemplate DataType="{x:Type src:Photo}">
+            <Grid VerticalAlignment="Center" HorizontalAlignment="Center" Margin="6">
+                <!-- Drop Shadow -->
+                <Border HorizontalAlignment="Stretch" VerticalAlignment="Stretch" CornerRadius="4"
+                        Background="#44000000">
+                    <Border.RenderTransform>
+                        <TranslateTransform X="5" Y="5" />
+                    </Border.RenderTransform>
+                    <Border.BitmapEffect>
+                        <BlurBitmapEffect Radius="8" />
+                    </Border.BitmapEffect>
+                </Border>
+                <!-- Image Template -->
+                <Border Background="White" BorderBrush="#22000000" BorderThickness="1">
+                    <StackPanel Orientation="Vertical">
+                        <Label Content="{Binding Metadata.DateImageTaken}">
+                            <Label.ToolTip>
+                                Only JPeg images with a stored thumbnail will display a thumbnail during preview.
+                            </Label.ToolTip>
+                        </Label>
+                        <Image Source="{Binding Image}" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </DataTemplate>
+
         <!-- Main photo catalog view -->
-        <Style x:Key="PhotoListBoxStyle" TargetType="{x:Type ListBox}">
+        <Style TargetType="{x:Type ListBox}" x:Key="PhotoListBoxStyle">
             <Setter Property="Foreground" Value="White" />
             <Setter Property="Template">
                 <Setter.Value>
@@ -30,7 +56,8 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                        <Border SnapsToDevicePixels="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                        <Border SnapsToDevicePixels="True" 
+                                HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                                 Background="{TemplateBinding Background}">
                             <ContentPresenter />
                         </Border>
@@ -61,14 +88,15 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type GroupBox}">
                         <Grid>
-                            <Border Background="#AAFFFFFF" CornerRadius="4" BorderBrush="#66000000" BorderThickness="1">
-                                <Border CornerRadius="4" BorderBrush="#88FFFFFF" BorderThickness="1"
-                                        ClipToBounds="true">
-                                    <Border CornerRadius="6" BorderThickness="2" BorderBrush="#ABB497">
+                            <Border Background="#AAFFFFFF" CornerRadius="4" 
+                                    BorderBrush="#66000000" BorderThickness="1">
+                                <Border CornerRadius="4" BorderBrush="#88FFFFFF" 
+                                        BorderThickness="1" ClipToBounds="true">
+                                    <Border CornerRadius="6" BorderThickness="2" BorderBrush="LightSteelBlue">
                                         <Border.BitmapEffect>
                                             <BlurBitmapEffect Radius="6" />
                                         </Border.BitmapEffect>
-                                        <Border CornerRadius="6" BorderThickness="2" BorderBrush="#DEF2AD">
+                                        <Border CornerRadius="6" BorderThickness="2" BorderBrush="LavenderBlush">
                                             <Border.BitmapEffect>
                                                 <BlurBitmapEffect Radius="6" />
                                             </Border.BitmapEffect>
@@ -105,105 +133,68 @@
             <Setter Property="FontWeight" Value="Bold" />
         </Style>
 
+        <!-- Image Metadata -->
+        <DataTemplate DataType="{x:Type src:Metatag}">
+            <StackPanel Orientation="Vertical">
+                <Label Style="{StaticResource MetadataHeader}" Content="{Binding Path=Name}"/>
+                <Label Content="{Binding Path=Description}"/>
+            </StackPanel>
+        </DataTemplate>
+
         <!-- FileGroup Treeview template -->
-        <HierarchicalDataTemplate DataType="{x:Type src:DuplicateGroup}" ItemsSource="{Binding DuplicateFiles}">
+        <DataTemplate DataType="{x:Type src:DuplicateGroup}">
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="{Binding GroupNo}"/>
                 <TextBlock Text=" [" Foreground="Blue"/>
                 <TextBlock Text="{Binding DuplicateFiles.Count}" Foreground="Blue"/>
                 <TextBlock Text="]" Foreground="Blue"/>
             </StackPanel>
-            <HierarchicalDataTemplate.ItemTemplate>
-                <DataTemplate DataType="{x:Type src:DuplicateFile}">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{Binding Path=Name}"/>
-                    </StackPanel>
-                </DataTemplate>
-            </HierarchicalDataTemplate.ItemTemplate>
-        </HierarchicalDataTemplate>
-
-        <!-- Image Preview -->
-        <DataTemplate DataType="{x:Type vsrc:Photo}">
-            <Grid VerticalAlignment="Center" HorizontalAlignment="Center" Margin="6">
-                <!-- Drop Shadow -->
-                <Border HorizontalAlignment="Stretch" VerticalAlignment="Stretch" CornerRadius="4"
-                Background="#44000000">
-                    <Border.RenderTransform>
-                        <TranslateTransform X="5" Y="5" />
-                    </Border.RenderTransform>
-                    <Border.BitmapEffect>
-                        <BlurBitmapEffect Radius="8" />
-                    </Border.BitmapEffect>
-                </Border>
-                <!-- Image Template -->
-                <Border Padding="4" Background="White" BorderBrush="#22000000" BorderThickness="1">
-                    <StackPanel Orientation="Vertical">
-                        <Image Source="{Binding Image}"/>
-                        <Label Content="{Binding Metadata.DateImageTaken}">
-                            <Label.ToolTip>
-                                Only JPeg images with a stored thumbnail will display a thumbnail during preview.
-                            </Label.ToolTip>
-                        </Label>
-                    </StackPanel>
-                </Border>
-            </Grid>
-        </DataTemplate>
-
-        <!-- Image Metadata -->
-        <DataTemplate DataType="{x:Type vsrc:Metatag}">
-            <StackPanel Orientation="Vertical">
-                <Label Style="{StaticResource MetadataHeader}" Content="{Binding Path=Name}"/>
-                <Label Content="{Binding Path=Description}"/>
-            </StackPanel>
         </DataTemplate>
     </Window.Resources>
+
     <!-- Display Controls -->
     <Grid DataContext="{Binding Source={StaticResource Photos}}">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="150"/>
-            <ColumnDefinition Width="15"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="15"/>
-            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="5"/>
+            <ColumnDefinition Width="4*"/>
+            <ColumnDefinition Width="5"/>
+            <ColumnDefinition Width="1.5*"/>
         </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
 
-        <DockPanel Grid.Column="0" Grid.Row="1" Grid.RowSpan="2" >
-            <!-- Group TreeView -->
+        <!-- TreeView -->
+        <DockPanel Grid.Column="0">
             <GroupBox Margin="0,0,5,0">
                 <ScrollViewer
                           VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                    <TreeView Name="trvFileGroups" SelectedItemChanged="OnTrvSelected">
-                    </TreeView>
+                    <TreeView Name="trvFileGroups" SelectedItemChanged="OnTrvSelected"/>
                 </ScrollViewer>
             </GroupBox>
         </DockPanel>
 
 
-        <!-- Splitter -->
-        <GridSplitter Grid.Column="1" Grid.RowSpan="2"
-                      ShowsPreview="True" HorizontalAlignment="Stretch" />
+        <!-- Left-Side Splitter -->
+        <GridSplitter Width="5" Grid.Column="1" ShowsPreview="True" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
 
-        <DockPanel Grid.Column="2" Grid.Row="0" Grid.RowSpan="2" >
+        <!-- Selected Group Image Preview -->
+        <DockPanel Grid.Column="2">
             <!-- Currently selected image path -->
-            <DockPanel DockPanel.Dock="Top">
-                <Label DockPanel.Dock="Left" Margin="0,0,10,0">Source:</Label>
-                <Label Content="{Binding /Source}"/>
-            </DockPanel>
+            <GroupBox DockPanel.Dock="Top">
+                <DockPanel>
+                    <Label DockPanel.Dock="Left">Source:</Label>
+                    <Label Content="{Binding /Source }"/>
+                </DockPanel>
+            </GroupBox>
 
-            <!-- Photo Canvas -->
-            <GroupBox>
-                <ScrollViewer 
-        VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                    <ListBox Name="PhotosListBox" SelectionMode="Extended" 
+            <!-- Image preview and selection pane -->
+            <GroupBox Margin="0,0,0,2">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <ListBox Name="PhotosListBox" SelectionMode="Extended" Margin="5"
+                     Style="{StaticResource PhotoListBoxStyle}"
                      ItemsSource="{Binding}"
                      IsSynchronizedWithCurrentItem="True"
-                     Style="{StaticResource PhotoListBoxStyle}"
                      SelectedIndex="0"
-                     MouseDoubleClick="OnPhotoClick" d:ItemsSource="{d:SampleData ItemCount=5}">
+                     MouseDoubleClick="OnPhotoClick">
                     </ListBox>
                 </ScrollViewer>
             </GroupBox>
@@ -211,11 +202,10 @@
 
 
         <!-- Right-side Splitter -->
-        <GridSplitter Grid.Column="3" Grid.RowSpan="2"
-                      ShowsPreview="True" HorizontalAlignment="Stretch" />
+        <GridSplitter Grid.Column="3" Width="15" ShowsPreview="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
 
         <!-- Right Hand Panel -->
-        <DockPanel Grid.Column="4" Grid.Row="0" Grid.RowSpan="2" Margin="5,0,0,0">
+        <DockPanel Grid.Column="4" Margin="5,0,0,0">
             <!-- Zoom Control -->
             <DockPanel DockPanel.Dock="Bottom" Margin="5">
                 <Label DockPanel.Dock="Left">Zoom:</Label>
@@ -234,7 +224,7 @@
             <GroupBox>
                 <ScrollViewer
                     VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                    <ListBox ItemsSource="{Binding /Metadata}" d:ItemsSource="{d:SampleData ItemCount=5}">
+                    <ListBox ItemsSource="{Binding /MetaTags}">
                     </ListBox>
                 </ScrollViewer>
             </GroupBox>

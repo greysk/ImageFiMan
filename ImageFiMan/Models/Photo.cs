@@ -1,19 +1,20 @@
 ﻿using MetadataExtractor;
-using System;
 using System.Windows.Media.Imaging;
 
-namespace ImageFiMan.ViewModels
+namespace ImageFiMan.Models
 {
     public class Photo
     {
         private readonly Uri _source;
-        //private ICollection<ExifMetadata> _metadataDirectories = [];
-        private ICollection<Metatag> _metadataDirectories = [];
+        private string _filepath;
+        private ICollection<Metatag> _metadataTags = [];
+        private ExifMetadata _exifMetadata;
 
         public Photo(string path)
         {
             _source = new Uri(path);
             Image = BitmapFrame.Create(_source);
+            Metadata = new ExifMetadata(path);
 
             foreach (var directory in ImageMetadataReader.ReadMetadata(path))
             {
@@ -21,16 +22,16 @@ namespace ImageFiMan.ViewModels
                 {
                     if (tag.Description.Length > 20)
                         continue;
-                    _metadataDirectories.Add(new Metatag(tag.Name, tag.Description));
+                    _metadataTags.Add(new Metatag(tag.Name, tag.Description));
                 }
             }
         }
 
-        public string? Source { get; }
+        public Uri Source { get { return _source; } }
         public BitmapFrame Image { get; set; }
-        //public ExifMetadata Metadata { get; }
+        public ExifMetadata Metadata { get; }
         public override string ToString() => _source.ToString() ?? string.Empty;
-        public ICollection<Metatag> Metadata
-        { get {  return _metadataDirectories; } }
+        public ICollection<Metatag> MetaTags
+        { get { return _metadataTags; } }
     }
 }
